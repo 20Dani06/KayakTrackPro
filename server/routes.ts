@@ -56,7 +56,25 @@ function extractSessionDataFromFit(fitData: any) {
   
   // Extract basic session info
   const startTime = session.start_time || sessionActivity.timestamp || new Date();
-  const totalDistance = (session.total_distance || 0) / 1000; // Convert m to km
+  
+  // Debug logging for distance
+  console.log('Raw FIT data - session.total_distance:', session.total_distance);
+  console.log('Raw FIT data - sessionActivity.total_distance:', sessionActivity.total_distance);
+  
+  // Extract distance - some FIT files store in different units
+  let totalDistance = session.total_distance || sessionActivity.total_distance || 0;
+  
+  // If distance seems reasonable (between 1-100km), it's probably already in km
+  // If it's a large number (>1000), it's likely in meters and needs conversion
+  if (totalDistance > 1000) {
+    // Large number indicates meters, convert to km
+    totalDistance = totalDistance / 1000;
+    console.log('Converting distance from meters to km:', totalDistance);
+  } else {
+    // Small number indicates it's already in km or a very short distance
+    console.log('Distance appears to be in km already:', totalDistance);
+  }
+  
   const totalTimerTime = session.total_timer_time || 0; // seconds
   const totalMinutes = Math.round(totalTimerTime / 60);
   
