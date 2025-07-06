@@ -1,8 +1,131 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import multer from "multer";
 import { storage } from "./storage";
 import { insertSessionSchema, insertUserSettingsSchema } from "@shared/schema";
 import { z } from "zod";
+import FitParser from "fit-file-parser";
+
+// Configure multer for file uploads
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  fileFilter: (req, file, cb) => {
+    if (file.originalname.toLowerCase().endsWith('.fit')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only .fit files are allowed'));
+    }
+  }
+});
+
+function parseFitFile(buffer: Buffer): Promise<any> {
+  return new Promise((resolve, reject) => {
+    const fitParser = new FitParser({
+      force: true,
+      speedUnit: 'km/h',
+      lengthUnit: 'km',
+      temperatureUnit: 'celsius',
+      elapsedRecordField: true,
+      mode: 'list',
+    });
+
+    fitParser.parse(buffer, (error: any, data: any) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
+
+function extractSessionDataFromFit(fitData: any) {
+  const { activity, sessions, records } = fitData;
+  
+  // Get session summary data
+  const session = sessions?.[0] || {};
+  const sessionActivity = activity?.[0] || {};
+  
+  // Extract basic session info
+  const startTime = session.start_time || sessionActivity.timestamp || new Date();
+  const totalDistance = (session.total_distance || 0) / 1000; // Convert m to km
+  const totalTimerTime = session.total_timer_time || 0; // seconds
+  const totalMinutes = Math.round(totalTimerTime / 60);
+  
+  // Extract performance data
+  const avgHeartRate = session.avg_heart_rate || null;
+  const avgCadence = session.avg_cadence || null; // This is stroke rate for kayaking
+  const avgPower = session.avg_power || null;
+  const maxSpeed = session.max_speed ? session.max_speed * 3.6 : null; // Convert m/s to km/h
+  const avgSpeed = session.avg_speed ? session.avg_speed * 3.6 : null;
+  
+  // Extract detailed data points from records
+  const gpsCoordinates: string[] = [];
+  const speedData: number[] = [];
+  const heartRateData: number[] = [];
+  const strokeRateData: number[] = [];
+  const powerData: number[] = [];
+  
+  if (records && Array.isArray(records)) {
+    records.forEach((record: any) => {
+      // GPS coordinates
+      if (record.position_lat && record.position_long) {
+        const lat = record.position_lat * (180 / Math.pow(2, 31));
+        const lng = record.position_long * (180 / Math.pow(2, 31));
+        gpsCoordinates.push(`${lat},${lng}`);
+      }
+      
+      // Speed data (convert m/s to km/h)
+      if (record.speed !== undefined) {
+        speedData.push(record.speed * 3.6);
+      }
+      
+      // Heart rate data
+      if (record.heart_rate !== undefined) {
+        heartRateData.push(record.heart_rate);
+      }
+      
+      // Stroke rate (cadence) data
+      if (record.cadence !== undefined) {
+        strokeRateData.push(record.cadence);
+      }
+      
+      // Power data
+      if (record.power !== undefined) {
+        powerData.push(record.power);
+      }
+    });
+  }
+  
+  // Determine session type based on data
+  let sessionType = "Training";
+  if (avgHeartRate && avgHeartRate > 180) {
+    sessionType = "Race";
+  } else if (avgHeartRate && avgHeartRate < 140) {
+    sessionType = "Recovery";
+  }
+  
+  return {
+    date: startTime,
+    sessionType,
+    distance: totalDistance,
+    duration: totalMinutes,
+    heartRate: avgHeartRate,
+    strokeRate: avgCadence,
+    power: avgPower,
+    fitFileData: JSON.stringify(fitData),
+    gpsCoordinates: gpsCoordinates.length > 0 ? gpsCoordinates : null,
+    speedData: speedData.length > 0 ? JSON.stringify(speedData) : null,
+    heartRateData: heartRateData.length > 0 ? JSON.stringify(heartRateData) : null,
+    strokeRateData: strokeRateData.length > 0 ? JSON.stringify(strokeRateData) : null,
+    powerData: powerData.length > 0 ? JSON.stringify(powerData) : null,
+    maxSpeed,
+    avgSpeed,
+    elevation: session.total_ascent || null,
+    notes: "Imported from Garmin FIT file"
+  };
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Session routes
@@ -51,6 +174,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(sessions);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch sessions by date range" });
+    }
+  });
+
+  // FIT file upload route
+  app.post("/api/sessions/upload-fit", upload.single('fitFile'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded" });
+      }
+
+      // Parse the FIT file
+      const fitData = await parseFitFile(req.file.buffer);
+      
+      // Extract session data from FIT file
+      const sessionData = extractSessionDataFromFit(fitData);
+      
+      // Create session with FIT data
+      const session = await storage.createSession(sessionData);
+      
+      res.json(session);
+    } catch (error) {
+      console.error('FIT file processing error:', error);
+      res.status(400).json({ error: "Failed to process FIT file" });
     }
   });
 

@@ -13,6 +13,18 @@ export const sessions = pgTable("sessions", {
   power: integer("power"), // watts
   perceivedEffort: integer("perceived_effort"), // 1-10 scale
   notes: text("notes"),
+  
+  // Garmin FIT file data
+  fitFileData: text("fit_file_data"), // JSON string of parsed FIT data
+  gpsCoordinates: text("gps_coordinates").array(), // Array of lat,lng strings
+  speedData: text("speed_data"), // JSON array of speed points over time
+  heartRateData: text("heart_rate_data"), // JSON array of HR points over time
+  strokeRateData: text("stroke_rate_data"), // JSON array of stroke rate over time
+  powerData: text("power_data"), // JSON array of power points over time
+  maxSpeed: real("max_speed"), // km/h
+  avgSpeed: real("avg_speed"), // km/h
+  elevation: real("elevation"), // meters gained/lost
+  
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

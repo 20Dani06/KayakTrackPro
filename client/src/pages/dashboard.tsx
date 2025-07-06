@@ -3,6 +3,7 @@ import { Plus, BarChart3 } from "lucide-react";
 import { Link } from "wouter";
 import PerformanceOverview from "@/components/performance-overview";
 import SessionForm from "@/components/session-form";
+import FitFileUpload from "@/components/fit-file-upload";
 import RecentSessions from "@/components/recent-sessions";
 import RacePredictions from "@/components/race-predictions";
 import TrainingZones from "@/components/training-zones";
@@ -34,8 +35,9 @@ export default function Dashboard() {
       <PerformanceOverview />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Session Form */}
-        <div className="lg:col-span-2">
+        {/* Session Form and FIT Upload */}
+        <div className="lg:col-span-2 space-y-6">
+          <FitFileUpload />
           <SessionForm />
         </div>
 

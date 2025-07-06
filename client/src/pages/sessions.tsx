@@ -3,11 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, Heart, Zap, Power } from "lucide-react";
+import { Calendar, Clock, Heart, Zap, Power, BarChart3 } from "lucide-react";
 import { format } from "date-fns";
+import SessionDetails from "@/components/session-details";
 import type { Session } from "@shared/schema";
 
 export default function Sessions() {
+  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+  
   const { data: sessions, isLoading } = useQuery<Session[]>({
     queryKey: ["/api/sessions"],
   });
@@ -144,14 +147,35 @@ export default function Sessions() {
               )}
 
               {session.notes && (
-                <div className="text-sm text-gray-600 italic">
+                <div className="text-sm text-gray-600 italic mb-4">
                   "{session.notes}"
                 </div>
+              )}
+
+              {/* Show detailed view button for FIT file sessions */}
+              {(session.speedData || session.heartRateData || session.gpsCoordinates) && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-ocean-blue border-ocean-blue hover:bg-water-light"
+                  onClick={() => setSelectedSession(session)}
+                >
+                  <BarChart3 className="w-4 h-4 mr-2" />
+                  View Detailed Charts
+                </Button>
               )}
             </CardContent>
           </Card>
         ))}
       </div>
+
+      {/* Session Details Modal */}
+      {selectedSession && (
+        <SessionDetails
+          session={selectedSession}
+          onClose={() => setSelectedSession(null)}
+        />
+      )}
     </div>
   );
 }

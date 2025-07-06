@@ -31,6 +31,21 @@ export class MemStorage implements IStorage {
       ...insertSession,
       id,
       createdAt: new Date(),
+      // Ensure nullable fields are explicitly null instead of undefined
+      heartRate: insertSession.heartRate ?? null,
+      strokeRate: insertSession.strokeRate ?? null,
+      power: insertSession.power ?? null,
+      perceivedEffort: insertSession.perceivedEffort ?? null,
+      notes: insertSession.notes ?? null,
+      fitFileData: insertSession.fitFileData ?? null,
+      gpsCoordinates: insertSession.gpsCoordinates ?? null,
+      speedData: insertSession.speedData ?? null,
+      heartRateData: insertSession.heartRateData ?? null,
+      strokeRateData: insertSession.strokeRateData ?? null,
+      powerData: insertSession.powerData ?? null,
+      maxSpeed: insertSession.maxSpeed ?? null,
+      avgSpeed: insertSession.avgSpeed ?? null,
+      elevation: insertSession.elevation ?? null,
     };
     this.sessions.set(id, session);
     return session;
@@ -67,12 +82,18 @@ export class MemStorage implements IStorage {
     if (!this.userSettings) {
       this.userSettings = {
         id: this.currentSettingsId++,
-        ...insertSettings,
+        weight: insertSettings.weight ?? null,
+        maxHeartRate: insertSettings.maxHeartRate ?? null,
+        restingHeartRate: insertSettings.restingHeartRate ?? null,
+        vo2Max: insertSettings.vo2Max ?? null,
       };
     } else {
       this.userSettings = {
         ...this.userSettings,
-        ...insertSettings,
+        weight: insertSettings.weight ?? this.userSettings.weight,
+        maxHeartRate: insertSettings.maxHeartRate ?? this.userSettings.maxHeartRate,
+        restingHeartRate: insertSettings.restingHeartRate ?? this.userSettings.restingHeartRate,
+        vo2Max: insertSettings.vo2Max ?? this.userSettings.vo2Max,
       };
     }
     return this.userSettings;

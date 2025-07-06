@@ -17,6 +17,16 @@ import { z } from "zod";
 
 const formSchema = insertSessionSchema.extend({
   date: z.string().min(1, "Date is required"),
+}).omit({
+  fitFileData: true,
+  gpsCoordinates: true,
+  speedData: true,
+  heartRateData: true,
+  strokeRateData: true,
+  powerData: true,
+  maxSpeed: true,
+  avgSpeed: true,
+  elevation: true,
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -32,10 +42,10 @@ export default function SessionForm() {
       sessionType: "Training",
       distance: 0,
       duration: 0,
-      heartRate: undefined,
-      strokeRate: undefined,
-      power: undefined,
-      perceivedEffort: undefined,
+      heartRate: "",
+      strokeRate: "",
+      power: "",
+      perceivedEffort: "",
       notes: "",
     },
   });
@@ -201,7 +211,7 @@ export default function SessionForm() {
                         type="number"
                         placeholder="180"
                         {...field}
-                        onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
+                        onChange={(e) => field.onChange(e.target.value)}
                       />
                     </FormControl>
                     <FormMessage />

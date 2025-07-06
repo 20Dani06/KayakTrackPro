@@ -1,0 +1,71 @@
+🛶 Adding Garmin File Upload to PaddleTracker
+You have your kayaking fitness tracking app, PaddleTracker, and it already lets you manually enter session data (distance, duration, heart rate, stroke rate, power, etc.).
+
+However, now you'd like to make things simpler and more automatic by uploading your kayaking session data directly from Garmin Connect.
+
+🔹 Why this matters:
+Right now, you have to manually type in your kayaking session details. Garmin already tracks all these details during your paddles, so being able to upload that file directly saves a ton of time and prevents mistakes.
+
+📁 Step-by-Step Explanation of What You Want to Add:
+Step 1: Exporting Garmin Files
+After your kayaking session, your watch (or Garmin device) syncs with Garmin Connect automatically.
+
+You then log into Garmin Connect on your computer (or phone), select the kayaking session, and download a FIT file.
+
+A FIT file is basically a special file containing all your session data (distance, GPS coordinates, speed, heart rate, stroke rate, time, and more).
+
+Step 2: Uploading FIT Files to PaddleTracker
+You want to be able to go into PaddleTracker and click an "Upload Garmin Session" button.
+
+When you click this, it opens a file picker window, allowing you to select the downloaded FIT file from your computer or mobile device.
+
+Step 3: PaddleTracker Reads and Interprets the FIT File
+Once you upload the FIT file, PaddleTracker should automatically read and extract all the details of your session.
+
+This includes:
+
+Date and time
+
+Duration
+
+Distance paddled
+
+GPS location data (coordinates and route)
+
+Speed and pace
+
+Heart rate
+
+Stroke rate (cadence)
+
+Power data (if available)
+
+PaddleTracker then saves this information as a session in its database, exactly as if you had manually entered it.
+
+Step 4: Automatically Calculating Metrics (VO₂ Max, Training Zones, Predictions)
+PaddleTracker should automatically run its existing kayak-specific calculations (VO₂ max estimation, training zones, race predictions) on the uploaded Garmin session data.
+
+You don't have to manually trigger this—it should happen automatically.
+
+📊 Step 5: Viewing Detailed Garmin Charts in PaddleTracker
+Right now, in Garmin Connect, you see detailed charts like:
+
+Speed over time
+
+Heart rate graphs
+
+Stroke rate and cadence charts
+
+Power output graphs
+
+Map of your paddling route
+
+You want PaddleTracker to also display these detailed charts.
+After uploading a FIT file, PaddleTracker should immediately let you view:
+
+Graphs: Speed, heart rate, stroke rate, power, and pace over the whole paddle session.
+
+Route Map: A visual map showing exactly where you paddled (using the GPS coordinates stored in the FIT file).
+
+This means you can analyze your kayaking performance directly within PaddleTracker, without needing Garmin Connect again.
+
