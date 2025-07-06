@@ -4,7 +4,7 @@ import multer from "multer";
 import { storage } from "./storage";
 import { insertSessionSchema, insertUserSettingsSchema } from "@shared/schema";
 import { z } from "zod";
-import FitParser from "fit-file-parser";
+// Dynamic import for FIT parser (will be loaded when needed)
 
 // Configure multer for file uploads
 const upload = multer({
@@ -19,25 +19,32 @@ const upload = multer({
   }
 });
 
-function parseFitFile(buffer: Buffer): Promise<any> {
-  return new Promise((resolve, reject) => {
-    const fitParser = new FitParser({
-      force: true,
-      speedUnit: 'km/h',
-      lengthUnit: 'km',
-      temperatureUnit: 'celsius',
-      elapsedRecordField: true,
-      mode: 'list',
-    });
+async function parseFitFile(buffer: Buffer): Promise<any> {
+  try {
+    // Dynamic import for ES module compatibility
+    const { default: FitParser } = await import("fit-file-parser");
+    
+    return new Promise((resolve, reject) => {
+      const fitParser = new FitParser({
+        force: true,
+        speedUnit: 'km/h',
+        lengthUnit: 'km',
+        temperatureUnit: 'celsius',
+        elapsedRecordField: true,
+        mode: 'list',
+      });
 
-    fitParser.parse(buffer, (error: any, data: any) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(data);
-      }
+      fitParser.parse(buffer, (error: any, data: any) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(data);
+        }
+      });
     });
-  });
+  } catch (error) {
+    throw new Error(`Failed to load FIT parser: ${error}`);
+  }
 }
 
 function extractSessionDataFromFit(fitData: any) {
