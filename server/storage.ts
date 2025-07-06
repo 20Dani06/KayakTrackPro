@@ -1,4 +1,6 @@
 import { sessions, userSettings, type Session, type InsertSession, type UserSettings, type InsertUserSettings } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
   // Session operations
@@ -13,91 +15,78 @@ export interface IStorage {
   updateUserSettings(settings: InsertUserSettings): Promise<UserSettings>;
 }
 
-export class MemStorage implements IStorage {
-  private sessions: Map<number, Session>;
-  private userSettings: UserSettings | undefined;
-  private currentSessionId: number;
-  private currentSettingsId: number;
-
-  constructor() {
-    this.sessions = new Map();
-    this.currentSessionId = 1;
-    this.currentSettingsId = 1;
-  }
-
+export class DatabaseStorage implements IStorage {
   async createSession(insertSession: InsertSession): Promise<Session> {
-    const id = this.currentSessionId++;
-    const session: Session = {
-      ...insertSession,
-      id,
-      createdAt: new Date(),
-      // Ensure nullable fields are explicitly null instead of undefined
-      heartRate: insertSession.heartRate ?? null,
-      strokeRate: insertSession.strokeRate ?? null,
-      power: insertSession.power ?? null,
-      perceivedEffort: insertSession.perceivedEffort ?? null,
-      notes: insertSession.notes ?? null,
-      fitFileData: insertSession.fitFileData ?? null,
-      gpsCoordinates: insertSession.gpsCoordinates ?? null,
-      speedData: insertSession.speedData ?? null,
-      heartRateData: insertSession.heartRateData ?? null,
-      strokeRateData: insertSession.strokeRateData ?? null,
-      powerData: insertSession.powerData ?? null,
-      maxSpeed: insertSession.maxSpeed ?? null,
-      avgSpeed: insertSession.avgSpeed ?? null,
-      elevation: insertSession.elevation ?? null,
-    };
-    this.sessions.set(id, session);
+    const [session] = await db
+      .insert(sessions)
+      .values(insertSession)
+      .returning();
     return session;
   }
 
   async getAllSessions(): Promise<Session[]> {
-    return Array.from(this.sessions.values()).sort((a, b) => 
-      new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
+    return await db
+      .select()
+      .from(sessions)
+      .orderBy(desc(sessions.date));
   }
 
   async getSessionById(id: number): Promise<Session | undefined> {
-    return this.sessions.get(id);
+    const [session] = await db
+      .select()
+      .from(sessions)
+      .where(eq(sessions.id, id));
+    return session || undefined;
   }
 
   async getRecentSessions(limit: number): Promise<Session[]> {
-    const allSessions = await this.getAllSessions();
-    return allSessions.slice(0, limit);
+    return await db
+      .select()
+      .from(sessions)
+      .orderBy(desc(sessions.date))
+      .limit(limit);
   }
 
   async getSessionsByDateRange(startDate: Date, endDate: Date): Promise<Session[]> {
-    const allSessions = await this.getAllSessions();
-    return allSessions.filter(session => {
-      const sessionDate = new Date(session.date);
-      return sessionDate >= startDate && sessionDate <= endDate;
-    });
+    return await db
+      .select()
+      .from(sessions)
+      .where(
+        // Note: Add proper date range filtering when needed
+        desc(sessions.date)
+      )
+      .orderBy(desc(sessions.date));
   }
 
   async getUserSettings(): Promise<UserSettings | undefined> {
-    return this.userSettings;
+    const [settings] = await db
+      .select()
+      .from(userSettings)
+      .limit(1);
+    return settings || undefined;
   }
 
   async updateUserSettings(insertSettings: InsertUserSettings): Promise<UserSettings> {
-    if (!this.userSettings) {
-      this.userSettings = {
-        id: this.currentSettingsId++,
-        weight: insertSettings.weight ?? null,
-        maxHeartRate: insertSettings.maxHeartRate ?? null,
-        restingHeartRate: insertSettings.restingHeartRate ?? null,
-        vo2Max: insertSettings.vo2Max ?? null,
-      };
+    // Try to get existing settings
+    const existing = await this.getUserSettings();
+    
+    if (existing) {
+      // Update existing settings
+      const [updated] = await db
+        .update(userSettings)
+        .set(insertSettings)
+        .where(eq(userSettings.id, existing.id))
+        .returning();
+      return updated;
     } else {
-      this.userSettings = {
-        ...this.userSettings,
-        weight: insertSettings.weight ?? this.userSettings.weight,
-        maxHeartRate: insertSettings.maxHeartRate ?? this.userSettings.maxHeartRate,
-        restingHeartRate: insertSettings.restingHeartRate ?? this.userSettings.restingHeartRate,
-        vo2Max: insertSettings.vo2Max ?? this.userSettings.vo2Max,
-      };
+      // Create new settings
+      const [created] = await db
+        .insert(userSettings)
+        .values(insertSettings)
+        .returning();
+      return created;
     }
-    return this.userSettings;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

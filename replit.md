@@ -103,6 +103,8 @@ The application uses PostgreSQL with two main tables:
 ```
 Changelog:
 - July 06, 2025. Initial setup
+- July 06, 2025. Added Garmin FIT file upload functionality with detailed charts and GPS tracking
+- July 06, 2025. Migrated from in-memory storage to PostgreSQL database
 ```
 
 ## User Preferences
