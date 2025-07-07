@@ -42,10 +42,10 @@ export default function SessionForm() {
       sessionType: "Training",
       distance: 0,
       duration: 0,
-      heartRate: "",
-      strokeRate: "",
-      power: "",
-      perceivedEffort: "",
+      heartRate: null,
+      strokeRate: null,
+      power: null,
+      perceivedEffort: null,
       notes: "",
     },
   });
@@ -151,6 +151,7 @@ export default function SessionForm() {
                         step="0.1"
                         placeholder="8.4"
                         {...field}
+                        value={field.value ?? ""}
                         onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                       />
                     </FormControl>
@@ -180,6 +181,7 @@ export default function SessionForm() {
                         type="number"
                         placeholder="42"
                         {...field}
+                        value={field.value ?? ""}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                       />
                     </FormControl>
@@ -211,6 +213,7 @@ export default function SessionForm() {
                         type="number"
                         placeholder="180"
                         {...field}
+                        value={field.value ?? ""}
                         onChange={(e) =>
                           field.onChange(
                             e.target.value ? parseInt(e.target.value) : undefined
@@ -244,6 +247,7 @@ export default function SessionForm() {
                         type="number"
                         placeholder="68"
                         {...field}
+                        value={field.value ?? ""}
                         onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
                       />
                     </FormControl>
@@ -275,6 +279,7 @@ export default function SessionForm() {
                         type="number"
                         placeholder="250"
                         {...field}
+                        value={field.value ?? ""}
                         onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
                       />
                     </FormControl>
@@ -306,6 +311,7 @@ export default function SessionForm() {
                         max="10"
                         placeholder="7"
                         {...field}
+                        value={field.value ?? ""}
                         onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
                       />
                     </FormControl>
@@ -326,6 +332,7 @@ export default function SessionForm() {
                       placeholder="Good session, felt strong throughout. Worked on catch technique."
                       className="h-24"
                       {...field}
+                      value={field.value ?? ""}
                     />
                   </FormControl>
                   <FormMessage />
