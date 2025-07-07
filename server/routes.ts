@@ -211,17 +211,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Parse the FIT file
       const fitData = await parseFitFile(req.file.buffer);
-      
+
       // Extract session data from FIT file
       const sessionData = extractSessionDataFromFit(fitData);
-      
+
       // Create session with FIT data
       const session = await storage.createSession(sessionData);
-      
+
       res.json(session);
-    } catch (error) {
+    } catch (error: any) {
       console.error('FIT file processing error:', error);
-      res.status(400).json({ error: "Failed to process FIT file" });
+      res.status(400).json({ error: error.message || "Failed to process FIT file" });
     }
   });
 
