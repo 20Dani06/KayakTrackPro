@@ -75,7 +75,7 @@ export default function FitFileUpload() {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
-    
+
     const files = Array.from(e.dataTransfer.files);
     if (files.length > 0) {
       handleFileSelect(files[0]);
@@ -83,6 +83,12 @@ export default function FitFileUpload() {
   };
 
   const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    setIsDragOver(true);
+  };
+
+  const handleDragEnter = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(true);
   };
@@ -136,6 +142,7 @@ export default function FitFileUpload() {
                 : "border-gray-300 hover:border-ocean-blue"
             } ${uploadMutation.isPending ? "opacity-50 pointer-events-none" : ""}`}
             onDrop={handleDrop}
+            onDragEnter={handleDragEnter}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onClick={handleClick}

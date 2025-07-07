@@ -211,7 +211,11 @@ export default function SessionForm() {
                         type="number"
                         placeholder="180"
                         {...field}
-                        onChange={(e) => field.onChange(e.target.value)}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value ? parseInt(e.target.value) : undefined
+                          )
+                        }
                       />
                     </FormControl>
                     <FormMessage />
