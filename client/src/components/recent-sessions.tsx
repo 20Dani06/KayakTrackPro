@@ -54,7 +54,7 @@ export default function RecentSessions() {
           </div>
         ) : (
           <div className="space-y-4">
-            {sessions.map((session) => (
+            { (Array.isArray(sessions) ? sessions : []).map((session) => (
               <div key={session.id} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
                 <div className="flex justify-between items-start mb-2">
                   <div>
