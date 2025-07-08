@@ -33,6 +33,7 @@ interface TrainingEntry {
   id: number;
   trackLength: number;
   trackTime: string;
+  windStrength: number;
   maxHeartRate: number;
   maxSpeed: number;
   state: string;
@@ -41,16 +42,16 @@ interface TrainingEntry {
 
 const states = [
   "edzetlen",
-  "nagyon kipihent",
-  "kipihent",
-  "semleges",
+  "nagyon fáradt",
   "fáradt",
-  "agyon fáradt",
+  "semleges",
+  "edzett",
 ];
 
 const formSchema = z.object({
   trackLength: z.number().min(1, "Required"),
   trackTime: z.string().min(1, "Required"),
+  windStrength: z.number().min(0, "Required"),
   maxHeartRate: z.number().min(0, "Required"),
   maxSpeed: z.number().min(0, "Required"),
   state: z.string().min(1, "Required"),
@@ -67,6 +68,7 @@ export default function TrainingEntries() {
     defaultValues: {
       trackLength: 1000,
       trackTime: "",
+      windStrength: 0,
       maxHeartRate: 0,
       maxSpeed: 0,
       state: "semleges",
@@ -98,6 +100,7 @@ export default function TrainingEntries() {
     form.reset({
       trackLength: 1000,
       trackTime: "",
+      windStrength: 0,
       maxHeartRate: 0,
       maxSpeed: 0,
       state: "semleges",
@@ -140,6 +143,25 @@ export default function TrainingEntries() {
                     <FormLabel>Pálya ideje</FormLabel>
                     <FormControl>
                       <Input placeholder="1:45" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="windStrength"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Szél erősség (km/h)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        {...field}
+                        value={field.value}
+                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -230,6 +252,7 @@ export default function TrainingEntries() {
                 <TableRow>
                   <TableHead>Pálya (m)</TableHead>
                   <TableHead>Idő</TableHead>
+                  <TableHead>Szél</TableHead>
                   <TableHead>Max HR</TableHead>
                   <TableHead>Max Seb.</TableHead>
                   <TableHead>Állapot</TableHead>
@@ -241,6 +264,7 @@ export default function TrainingEntries() {
                   <TableRow key={e.id}>
                     <TableCell>{e.trackLength}</TableCell>
                     <TableCell>{e.trackTime}</TableCell>
+                    <TableCell>{e.windStrength}</TableCell>
                     <TableCell>{e.maxHeartRate}</TableCell>
                     <TableCell>{e.maxSpeed}</TableCell>
                     <TableCell>{e.state}</TableCell>
