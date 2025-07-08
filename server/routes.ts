@@ -178,6 +178,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/sessions/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const session = await storage.getSessionById(id);
+      if (!session) {
+        return res.status(404).json({ error: "Session not found" });
+      }
+      res.json(session);
+    } catch {
+      res.status(500).json({ error: "Failed to fetch session" });
+    }
+  });
+
+  app.put("/api/sessions/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const sessionData = insertSessionSchema.parse({
+        ...req.body,
+        date: new Date(req.body.date),
+      });
+      const updated = await storage.updateSession(id, sessionData);
+      res.json(updated);
+    } catch (error) {
+      console.error("PUT /api/sessions/:id", error);
+      res.status(400).json({ error: "Invalid session data" });
+    }
+  });
+
+  app.delete("/api/sessions/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteSession(id);
+      res.json({ success: true });
+    } catch {
+      res.status(500).json({ error: "Failed to delete session" });
+    }
+  });
+
   app.get("/api/sessions/recent", async (req, res) => {
     try {
       const limit = parseInt(req.query.limit as string) || 10;

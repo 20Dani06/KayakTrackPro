@@ -1,18 +1,60 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, Heart, Zap, Power, BarChart3 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Calendar, Clock, Heart, Zap, Power, BarChart3, Pencil, Trash2 } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import SessionForm from "@/components/session-form";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 import { format } from "date-fns";
 import SessionDetails from "@/components/session-details";
 import type { Session } from "@shared/schema";
 
 export default function Sessions() {
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+  const [editingSession, setEditingSession] = useState<Session | null>(null);
+  const [filterType, setFilterType] = useState<string>("All");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
   
   const { data: sessions, isLoading } = useQuery<Session[]>({
     queryKey: ["/api/sessions"],
+  });
+
+  const filteredSessions = (sessions || [])
+    .filter((s) => filterType === "All" || s.sessionType === filterType)
+    .slice()
+    .sort((a, b) =>
+      sortDir === "asc"
+        ? new Date(a.date).getTime() - new Date(b.date).getTime()
+        : new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+
+  const summary = filteredSessions.reduce(
+    (acc, s) => {
+      acc.distance += s.distance;
+      acc.duration += s.duration;
+      return acc;
+    },
+    { distance: 0, duration: 0 }
+  );
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest("DELETE", `/api/sessions/${id}`);
+    },
+    onSuccess: () => {
+      toast({ title: "Session deleted" });
+      queryClient.invalidateQueries({ queryKey: ["/api/sessions"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/sessions/recent"] });
+    },
+    onError: () => {
+      toast({ title: "Failed to delete", variant: "destructive" });
+    },
   });
 
   const formatDuration = (minutes: number) => {
@@ -70,8 +112,37 @@ export default function Sessions() {
         <p className="text-gray-600">Track your progress and analyze your performance</p>
       </div>
 
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+        <div className="flex space-x-4">
+          <Select value={filterType} onValueChange={setFilterType}>
+            <SelectTrigger className="w-32">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="All">All</SelectItem>
+              <SelectItem value="Training">Training</SelectItem>
+              <SelectItem value="Race">Race</SelectItem>
+              <SelectItem value="Recovery">Recovery</SelectItem>
+              <SelectItem value="Technique">Technique</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={sortDir} onValueChange={(v) => setSortDir(v as "asc" | "desc") }>
+            <SelectTrigger className="w-28">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="desc">Newest</SelectItem>
+              <SelectItem value="asc">Oldest</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="bg-gray-50 rounded-lg px-4 py-2 text-sm text-gray-600">
+          {filteredSessions.length} sessions &bull; {summary.distance.toFixed(1)} km &bull; {summary.duration} min
+        </div>
+      </div>
+
       <div className="space-y-4">
-        {sessions.map((session) => (
+        {filteredSessions.map((session) => (
           <Card key={session.id} className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-3">
               <div className="flex justify-between items-start">
@@ -82,9 +153,25 @@ export default function Sessions() {
                     {format(new Date(session.date), "MMM dd, yyyy")}
                   </div>
                 </div>
-                <Badge className={getSessionTypeColor(session.sessionType)}>
-                  {session.sessionType}
-                </Badge>
+                <div className="flex items-center space-x-2">
+                  <Badge className={getSessionTypeColor(session.sessionType)}>
+                    {session.sessionType}
+                  </Badge>
+                  <Button variant="ghost" size="icon" onClick={() => setEditingSession(session)}>
+                    <Pencil className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      if (confirm("Delete this session?")) {
+                        deleteMutation.mutate(session.id);
+                      }
+                    }}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent>
@@ -175,6 +262,18 @@ export default function Sessions() {
           session={selectedSession}
           onClose={() => setSelectedSession(null)}
         />
+      )}
+
+      {editingSession && (
+        <Dialog open onOpenChange={() => setEditingSession(null)}>
+          <DialogContent>
+            <SessionForm
+              session={editingSession}
+              onSuccess={() => setEditingSession(null)}
+              onCancel={() => setEditingSession(null)}
+            />
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );
