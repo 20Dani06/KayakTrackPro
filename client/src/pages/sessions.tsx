@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+
 import { Calendar, Clock, Heart, Zap, Power, BarChart3, Pencil, Trash2 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import SessionForm from "@/components/session-form";
@@ -18,6 +20,7 @@ export default function Sessions() {
   const [editingSession, setEditingSession] = useState<Session | null>(null);
   const [filterType, setFilterType] = useState<string>("All");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [search, setSearch] = useState("");
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
@@ -27,6 +30,13 @@ export default function Sessions() {
 
   const filteredSessions = (sessions || [])
     .filter((s) => filterType === "All" || s.sessionType === filterType)
+    .filter((s) =>
+      search
+        ? (s.notes || "").toLowerCase().includes(search.toLowerCase()) ||
+          s.sessionType.toLowerCase().includes(search.toLowerCase())
+        : true
+    )
+
     .slice()
     .sort((a, b) =>
       sortDir === "asc"
@@ -135,6 +145,13 @@ export default function Sessions() {
               <SelectItem value="asc">Oldest</SelectItem>
             </SelectContent>
           </Select>
+          <Input
+            placeholder="Search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-40"
+          />
+
         </div>
         <div className="bg-gray-50 rounded-lg px-4 py-2 text-sm text-gray-600">
           {filteredSessions.length} sessions &bull; {summary.distance.toFixed(1)} km &bull; {summary.duration} min

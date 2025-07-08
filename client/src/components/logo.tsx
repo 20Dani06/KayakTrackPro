@@ -27,8 +27,9 @@ export default function Logo({ className }: LogoProps) {
         y="50%"
         dominantBaseline="middle"
         textAnchor="middle"
-        fontFamily="Montserrat, sans-serif"
-        fontWeight="300"
+        fontFamily="'Montserrat Alternates', sans-serif"
+        fontWeight="200"
+
         fontSize="56"
         letterSpacing="4"
         fill="url(#kayaxGradient)"
@@ -40,7 +41,6 @@ export default function Logo({ className }: LogoProps) {
           K
         </tspan>
         ΛYΛX
-
       </text>
     </svg>
   );
