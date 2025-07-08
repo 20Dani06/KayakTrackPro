@@ -3,6 +3,7 @@ import { Plus, BarChart3 } from "lucide-react";
 import { Link } from "wouter";
 import Logo from "@/components/logo";
 import PerformanceOverview from "@/components/performance-overview";
+import TodaySessions from "@/components/today-sessions";
 import SessionForm from "@/components/session-form";
 import FitFileUpload from "@/components/fit-file-upload";
 import RecentSessions from "@/components/recent-sessions";
@@ -34,6 +35,9 @@ export default function Dashboard() {
           </Button>
         </div>
       </div>
+
+      {/* Today's Session Reminder */}
+      <TodaySessions />
 
       {/* Performance Overview */}
       <PerformanceOverview />
