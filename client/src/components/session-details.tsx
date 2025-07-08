@@ -99,7 +99,7 @@ export default function SessionDetails({ session, onClose }: SessionDetailsProps
           {/* Session Summary */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div className="bg-gray-50 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-ocean-blue">{session.distance} km</div>
+                <div className="text-2xl font-bold text-ocean-blue">{session.distance.toFixed(2)} km</div>
               <div className="text-sm text-gray-600">Distance</div>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">

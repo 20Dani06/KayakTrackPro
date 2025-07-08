@@ -154,7 +154,7 @@ export default function Sessions() {
 
         </div>
         <div className="bg-gray-50 rounded-lg px-4 py-2 text-sm text-gray-600">
-          {filteredSessions.length} sessions &bull; {summary.distance.toFixed(1)} km &bull; {summary.duration} min
+          {filteredSessions.length} sessions &bull; {summary.distance.toFixed(2)} km &bull; {summary.duration} min
         </div>
       </div>
 
@@ -198,7 +198,7 @@ export default function Sessions() {
                     <span className="text-white text-sm font-medium">📏</span>
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-ocean-blue">{session.distance} km</div>
+                    <div className="text-sm font-medium text-ocean-blue">{session.distance.toFixed(2)} km</div>
                     <div className="text-xs text-gray-500">Distance</div>
                   </div>
                 </div>
