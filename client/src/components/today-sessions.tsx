@@ -87,9 +87,9 @@ export default function TodaySessions() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm font-medium text-ocean-blue">
-                    {session.distance} km
-                  </div>
+                    <div className="text-sm font-medium text-ocean-blue">
+                      {session.distance.toFixed(2)} km
+                    </div>
                   <div className="text-xs text-gray-500">
                     {session.duration} min
                   </div>
