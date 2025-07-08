@@ -139,7 +139,7 @@ export default function VO2Calculator() {
                   )}
                 />
                 
-                <Button type="submit" className="w-full bg-white text-black hover:bg-gray-100">
+                <Button type="submit" className="w-full bg-white text-black hover:bg-gray-100 border border-gray-300">
                   Calculate VO₂ Max
                 </Button>
               </form>
