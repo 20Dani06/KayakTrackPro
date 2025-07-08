@@ -1,7 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Flag, Activity, HeartPulse, BedDouble } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Flag,
+  Activity,
+  HeartPulse,
+  BedDouble,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 import { predictRaceTime } from "@/lib/kayak-calculations";
 import type { Session } from "@shared/schema";
 
@@ -18,13 +27,12 @@ export default function FitnessStats() {
 
   const distances = ["200m", "500m", "1000m"] as const;
   const [index, setIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
 
-  useEffect(() => {
-    const id = setInterval(() => {
-      setIndex((i) => (i + 1) % distances.length);
-    }, 3000);
-    return () => clearInterval(id);
-  }, []);
+  const cycle = (dir: number) => {
+    setDirection(dir);
+    setIndex((i) => (i + dir + distances.length) % distances.length);
+  };
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -52,16 +60,58 @@ export default function FitnessStats() {
               Race Time Predictions
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="relative">
             {!prediction ? (
               <div className="text-center py-8 text-gray-600">No data</div>
             ) : (
-              <div className="text-center py-4 space-y-2">
-                <div className="text-xl font-bold text-gray-900">
-                  {currentDistance}
-                </div>
-                <div className="text-3xl font-bold text-ocean-blue">
-                  {formatTime(prediction)}
+              <div className="py-4">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="absolute left-0 top-1/2 -translate-y-1/2"
+                  onClick={() => cycle(-1)}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="absolute right-0 top-1/2 -translate-y-1/2"
+                  onClick={() => cycle(1)}
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+                <div className="relative overflow-hidden">
+                  <AnimatePresence custom={direction} initial={false} mode="wait">
+                    <motion.div
+                      key={currentDistance}
+                      custom={direction}
+                      variants={{
+                        enter: (dir: number) => ({
+                          x: dir > 0 ? 100 : -100,
+                          opacity: 0,
+                          position: "absolute",
+                          width: "100%",
+                        }),
+                        center: { x: 0, opacity: 1, position: "static" },
+                        exit: (dir: number) => ({
+                          x: dir > 0 ? -100 : 100,
+                          opacity: 0,
+                          position: "absolute",
+                          width: "100%",
+                        }),
+                      }}
+                      transition={{ duration: 0.3 }}
+                      className="text-center space-y-2"
+                    >
+                      <div className="text-xl font-bold text-gray-900">
+                        {currentDistance}
+                      </div>
+                      <div className="text-3xl font-bold text-ocean-blue">
+                        {formatTime(prediction)}
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
               </div>
             )}
