@@ -7,6 +7,8 @@ export interface IStorage {
   createSession(session: InsertSession): Promise<Session>;
   getAllSessions(): Promise<Session[]>;
   getSessionById(id: number): Promise<Session | undefined>;
+  updateSession(id: number, session: InsertSession): Promise<Session>;
+  deleteSession(id: number): Promise<void>;
   getRecentSessions(limit: number): Promise<Session[]>;
   getSessionsByDateRange(startDate: Date, endDate: Date): Promise<Session[]>;
   
@@ -37,6 +39,19 @@ export class DatabaseStorage implements IStorage {
       .from(sessions)
       .where(eq(sessions.id, id));
     return session || undefined;
+  }
+
+  async updateSession(id: number, update: InsertSession): Promise<Session> {
+    const [session] = await db
+      .update(sessions)
+      .set(update)
+      .where(eq(sessions.id, id))
+      .returning();
+    return session;
+  }
+
+  async deleteSession(id: number): Promise<void> {
+    await db.delete(sessions).where(eq(sessions.id, id));
   }
 
   async getRecentSessions(limit: number): Promise<Session[]> {
