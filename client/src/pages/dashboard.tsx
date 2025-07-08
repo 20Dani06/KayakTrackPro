@@ -8,6 +8,7 @@ import SessionForm from "@/components/session-form";
 import FitFileUpload from "@/components/fit-file-upload";
 import RecentSessions from "@/components/recent-sessions";
 import RacePredictions from "@/components/race-predictions";
+import TimeEntryDialog from "@/components/time-entry-dialog";
 import TrainingZones from "@/components/training-zones";
 import PerformanceInsights from "@/components/performance-insights";
 import VO2Calculator from "@/components/vo2-calculator";
@@ -33,6 +34,7 @@ export default function Dashboard() {
               View Analytics
             </Link>
           </Button>
+          <TimeEntryDialog />
         </div>
       </div>
 
