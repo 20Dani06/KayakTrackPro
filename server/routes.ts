@@ -2,7 +2,11 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import multer from "multer";
 import { storage } from "./storage";
-import { insertSessionSchema, insertUserSettingsSchema } from "@shared/schema";
+import {
+  insertSessionSchema,
+  insertUserSettingsSchema,
+  insertDiaryEntrySchema,
+} from "@shared/schema";
 import { z } from "zod";
 // Dynamic import for FIT parser (will be loaded when needed)
 
@@ -284,6 +288,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(settings);
     } catch (error) {
       res.status(400).json({ error: "Invalid user settings data" });
+    }
+  });
+
+  // Diary routes
+  app.get("/api/diary", async (_req, res) => {
+    try {
+      const entries = await storage.getDiaryEntries();
+      res.json(entries);
+    } catch {
+      res.status(500).json({ error: "Failed to fetch diary entries" });
+    }
+  });
+
+  app.post("/api/diary", async (req, res) => {
+    try {
+      const entryData = insertDiaryEntrySchema.parse({
+        ...req.body,
+        date: new Date(req.body.date),
+      });
+      const entry = await storage.createDiaryEntry(entryData);
+      res.json(entry);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid diary entry" });
+    }
+  });
+
+  app.put("/api/diary/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const entryData = insertDiaryEntrySchema.parse({
+        ...req.body,
+        date: new Date(req.body.date),
+      });
+      const updated = await storage.updateDiaryEntry(id, entryData);
+      res.json(updated);
+    } catch {
+      res.status(400).json({ error: "Invalid diary entry" });
+    }
+  });
+
+  app.delete("/api/diary/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteDiaryEntry(id);
+      res.json({ success: true });
+    } catch {
+      res.status(500).json({ error: "Failed to delete diary entry" });
     }
   });
 
