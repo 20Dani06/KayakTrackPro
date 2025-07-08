@@ -25,7 +25,8 @@
   --radius: 0.5rem;
   
   /* Custom kayak app colors */
-  --ocean-blue: hsl(207, 90%, 54%);
+  --ocean-blue: #1769D7;
+  --copper: #A86A38;
   --deep-water: hsl(211, 100%, 27%);
   --bright-cyan: hsl(192, 100%, 40%);
   --water-light: hsl(192, 100%, 93%);
@@ -53,6 +54,7 @@
   --destructive-foreground: hsl(0, 0%, 98%);
   --ring: hsl(240, 4.9%, 83.9%);
   --radius: 0.5rem;
+  --copper: #A86A38;
 }
 
 @layer base {
@@ -81,6 +83,10 @@
   .text-paddle-orange {
     color: var(--paddle-orange);
   }
+
+  .text-copper {
+    color: var(--copper);
+  }
   
   .bg-ocean-blue {
     background-color: var(--ocean-blue);
@@ -97,9 +103,17 @@
   .bg-paddle-orange {
     background-color: var(--paddle-orange);
   }
+
+  .bg-copper {
+    background-color: var(--copper);
+  }
   
   .border-ocean-blue {
     border-color: var(--ocean-blue);
+  }
+
+  .border-copper {
+    border-color: var(--copper);
   }
   
   .hover\:bg-deep-water:hover {
