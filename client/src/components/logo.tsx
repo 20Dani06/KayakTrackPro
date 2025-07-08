@@ -32,12 +32,14 @@ export default function Logo({ className }: LogoProps) {
 
         fontSize="56"
         letterSpacing="2"
+
         fill="url(#kayaxGradient)"
         style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.2))" }}
       >
         <tspan
           style={{
-            transform: "skewX(-15deg) scaleX(0.75)",
+
+            transform: "skewX(-15deg) scaleX(1.1)",
             display: "inline-block",
           }}
         >
@@ -51,6 +53,7 @@ export default function Logo({ className }: LogoProps) {
         <tspan
           style={{
             transform: "skewX(-20deg) scaleX(0.6)",
+
             display: "inline-block",
           }}
         >
@@ -66,6 +69,7 @@ export default function Logo({ className }: LogoProps) {
         >
           X
         </tspan>
+
       </text>
     </svg>
   );
