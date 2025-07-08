@@ -40,6 +40,7 @@ export default function Logo({ className }: LogoProps) {
           K
         </tspan>
         ΛYΛX
+
       </text>
     </svg>
   );
