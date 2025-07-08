@@ -16,7 +16,7 @@ export default function Dashboard() {
       {/* Quick Actions */}
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <Button className="flex-1 bg-white text-black hover:bg-gray-100" asChild>
+          <Button className="flex-1 bg-white text-black hover:bg-gray-100 border border-gray-300" asChild>
             <Link href="/sessions">
               <Plus className="w-4 h-4 mr-2" />
               Log New Session
