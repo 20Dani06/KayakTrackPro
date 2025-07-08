@@ -81,37 +81,42 @@ export default function FitnessStats() {
                 >
                   <ChevronRight className="w-4 h-4" />
                 </Button>
-                <div className="relative overflow-hidden">
-                  <AnimatePresence custom={direction} initial={false} mode="wait">
-                    <motion.div
-                      key={currentDistance}
-                      custom={direction}
-                      variants={{
-                        enter: (dir: number) => ({
-                          x: dir > 0 ? 100 : -100,
-                          opacity: 0,
-                          position: "absolute",
-                          width: "100%",
-                        }),
-                        center: { x: 0, opacity: 1, position: "static" },
-                        exit: (dir: number) => ({
-                          x: dir > 0 ? -100 : 100,
-                          opacity: 0,
-                          position: "absolute",
-                          width: "100%",
-                        }),
-                      }}
-                      transition={{ duration: 0.3 }}
-                      className="text-center space-y-2"
-                    >
-                      <div className="text-xl font-bold text-gray-900">
+                <div className="relative overflow-hidden h-[4.5rem] flex flex-col items-center justify-center">
+                  <div className="relative">
+                    <AnimatePresence custom={direction} mode="wait" initial={false}>
+                      <motion.div
+                        key={currentDistance}
+                        custom={direction}
+                        variants={{
+                          enter: (dir: number) => ({ x: dir > 0 ? 40 : -40, opacity: 0, position: "absolute" }),
+                          center: { x: 0, opacity: 1, position: "static" },
+                          exit: (dir: number) => ({ x: dir > 0 ? -40 : 40, opacity: 0, position: "absolute" }),
+                        }}
+                        transition={{ duration: 0.25 }}
+                        className="text-xl font-bold text-gray-900"
+                      >
                         {currentDistance}
-                      </div>
-                      <div className="text-3xl font-bold text-ocean-blue">
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+                  <div className="relative">
+                    <AnimatePresence custom={direction} mode="wait" initial={false}>
+                      <motion.div
+                        key={currentDistance + "-time"}
+                        custom={direction}
+                        variants={{
+                          enter: (dir: number) => ({ x: dir > 0 ? 40 : -40, opacity: 0, position: "absolute" }),
+                          center: { x: 0, opacity: 1, position: "static" },
+                          exit: (dir: number) => ({ x: dir > 0 ? -40 : 40, opacity: 0, position: "absolute" }),
+                        }}
+                        transition={{ duration: 0.25 }}
+                        className="text-3xl font-bold text-ocean-blue"
+                      >
                         {formatTime(prediction)}
-                      </div>
-                    </motion.div>
-                  </AnimatePresence>
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+
                 </div>
               </div>
             )}
