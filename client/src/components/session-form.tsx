@@ -11,13 +11,16 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { insertSessionSchema } from "@shared/schema";
+import { insertSessionSchema, type InsertSession } from "@shared/schema";
 import { Edit, Info } from "lucide-react";
 import { z } from "zod";
 
-const formSchema = insertSessionSchema.extend({
-  date: z.string().min(1, "Date is required"),
-}).omit({
+function toDatetimeLocal(date: Date) {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+const formSchema = insertSessionSchema.omit({
   fitFileData: true,
   gpsCoordinates: true,
   speedData: true,
@@ -38,7 +41,7 @@ export default function SessionForm() {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      date: new Date().toISOString().slice(0, 16),
+      date: new Date(),
       sessionType: "Training",
       distance: 0,
       duration: 0,
@@ -96,7 +99,11 @@ export default function SessionForm() {
                   <FormItem>
                     <FormLabel>Date & Time</FormLabel>
                     <FormControl>
-                      <Input type="datetime-local" {...field} />
+                      <Input
+                        type="datetime-local"
+                        value={toDatetimeLocal(field.value)}
+                        onChange={(e) => field.onChange(new Date(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
