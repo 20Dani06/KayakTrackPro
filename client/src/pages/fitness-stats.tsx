@@ -45,6 +45,14 @@ export default function FitnessStats() {
   const currentDistance = distances[index];
   const prediction = predictions ? predictions[currentDistance] : null;
 
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (e.deltaY > 10) {
+      cycle(1);
+    } else if (e.deltaY < -10) {
+      cycle(-1);
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
@@ -81,7 +89,10 @@ export default function FitnessStats() {
                 >
                   <ChevronRight className="w-4 h-4" />
                 </Button>
-                <div className="relative overflow-hidden h-[4.5rem] flex flex-col items-center justify-center">
+                <div
+                  onWheel={handleWheel}
+                  className="relative overflow-hidden h-[4.5rem] flex flex-col items-center justify-center"
+                >
                   <div className="relative">
                     <AnimatePresence custom={direction} mode="wait" initial={false}>
                       <motion.div
