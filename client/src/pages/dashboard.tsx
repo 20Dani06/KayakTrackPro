@@ -16,13 +16,13 @@ export default function Dashboard() {
       {/* Quick Actions */}
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <Button className="flex-1 bg-ocean-blue text-white hover:bg-deep-water" asChild>
+          <Button className="flex-1 bg-white text-black hover:bg-gray-100" asChild>
             <Link href="/sessions">
               <Plus className="w-4 h-4 mr-2" />
               Log New Session
             </Link>
           </Button>
-          <Button variant="outline" className="flex-1 text-ocean-blue border-ocean-blue hover:bg-water-light" asChild>
+          <Button variant="outline" className="flex-1 text-black border-gray-300 bg-white hover:bg-gray-100" asChild>
             <Link href="/analytics">
               <BarChart3 className="w-4 h-4 mr-2" />
               View Analytics
