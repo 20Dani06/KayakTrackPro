@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 import { predictRaceTime } from "@/lib/kayak-calculations";
+import RaceResults from "@/components/race-results";
 import type { Session } from "@shared/schema";
 
 export default function RacePredictions() {
@@ -32,6 +33,7 @@ export default function RacePredictions() {
   } : null;
 
   return (
+    <>
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center">
@@ -89,5 +91,7 @@ export default function RacePredictions() {
         )}
       </CardContent>
     </Card>
+    <RaceResults />
+    </>
   );
 }
