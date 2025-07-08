@@ -30,18 +30,24 @@ import {
 interface RaceResult {
   id: number;
   name: string;
-  wind: string;
+  wind: number;
   location: string;
   distance: number;
   time: string;
+  note?: string;
+  maxHeartRate: number;
+  maxSpeed: number;
 }
 
 const formSchema = z.object({
   name: z.string().min(1, "Required"),
-  wind: z.string().min(1, "Required"),
+  wind: z.number().min(0, "Required"),
   location: z.string().min(1, "Required"),
   distance: z.number().min(0.1, "Distance must be positive"),
   time: z.string().min(1, "Required"),
+  note: z.string().optional(),
+  maxHeartRate: z.number().min(0, "Required"),
+  maxSpeed: z.number().min(0, "Required"),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -53,10 +59,13 @@ export default function RaceResults() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      wind: "",
+      wind: 0,
       location: "",
       distance: 200,
       time: "",
+      note: "",
+      maxHeartRate: 0,
+      maxSpeed: 0,
     },
   });
 
@@ -81,7 +90,16 @@ export default function RaceResults() {
       ...data,
     };
     setResults([...results, newResult]);
-    form.reset();
+    form.reset({
+      name: "",
+      wind: 0,
+      location: "",
+      distance: 200,
+      time: "",
+      note: "",
+      maxHeartRate: 0,
+      maxSpeed: 0,
+    });
   };
 
   return (
@@ -111,9 +129,14 @@ export default function RaceResults() {
                 name="wind"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Wind Strength</FormLabel>
+                    <FormLabel>Wind Strength (km/h)</FormLabel>
                     <FormControl>
-                      <Input placeholder="3 m/s tailwind" {...field} />
+                      <Input
+                        type="number"
+                        {...field}
+                        value={field.value}
+                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -166,7 +189,57 @@ export default function RaceResults() {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="maxHeartRate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Max Heart Rate (bpm)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        {...field}
+                        value={field.value}
+                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="maxSpeed"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Max Speed (km/h)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        {...field}
+                        value={field.value}
+                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
+            <FormField
+              control={form.control}
+              name="note"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Megjegyzés / Érzés</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <Button
               type="submit"
               className="bg-white text-black border border-gray-300 hover:bg-gray-100"
@@ -182,10 +255,13 @@ export default function RaceResults() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Race</TableHead>
-                  <TableHead>Wind</TableHead>
+                  <TableHead>Wind (km/h)</TableHead>
                   <TableHead>Location</TableHead>
                   <TableHead className="text-right">Distance (m)</TableHead>
                   <TableHead className="text-right">Time</TableHead>
+                  <TableHead className="text-right">Max HR</TableHead>
+                  <TableHead className="text-right">Max Speed</TableHead>
+                  <TableHead>Note</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -198,6 +274,9 @@ export default function RaceResults() {
                       {result.distance}
                     </TableCell>
                     <TableCell className="text-right">{result.time}</TableCell>
+                    <TableCell className="text-right">{result.maxHeartRate}</TableCell>
+                    <TableCell className="text-right">{result.maxSpeed}</TableCell>
+                    <TableCell>{result.note}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
