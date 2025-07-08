@@ -1,12 +1,15 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import FitFileUpload from "@/components/fit-file-upload";
 import { Calendar } from "lucide-react";
-import { Link } from "wouter";
 import { format } from "date-fns";
 import type { Session } from "@shared/schema";
 
 export default function TodaySessions() {
+  const [uploadOpen, setUploadOpen] = useState(false);
   const { data: sessions, isLoading } = useQuery<Session[]>({
     queryKey: ["/api/sessions"],
   });
@@ -41,11 +44,16 @@ export default function TodaySessions() {
             You haven't logged a session today
           </p>
           <Button
-            asChild
             className="bg-white text-black hover:bg-gray-100 border border-gray-300"
+            onClick={() => setUploadOpen(true)}
           >
-            <Link href="/sessions">Log Today's Session</Link>
+            Log Today's Session
           </Button>
+          <Dialog open={uploadOpen} onOpenChange={setUploadOpen}>
+            <DialogContent>
+              <FitFileUpload />
+            </DialogContent>
+          </Dialog>
         </CardContent>
       </Card>
     );
