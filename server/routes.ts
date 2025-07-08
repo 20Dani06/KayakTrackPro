@@ -6,6 +6,7 @@ import {
   insertSessionSchema,
   insertUserSettingsSchema,
   insertDiaryEntrySchema,
+  insertEventSchema,
 } from "@shared/schema";
 import { z } from "zod";
 // Dynamic import for FIT parser (will be loaded when needed)
@@ -335,6 +336,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ success: true });
     } catch {
       res.status(500).json({ error: "Failed to delete diary entry" });
+    }
+  });
+
+  // Event routes
+  app.get("/api/events", async (_req, res) => {
+    try {
+      const events = await storage.getEvents();
+      res.json(events);
+    } catch {
+      res.status(500).json({ error: "Failed to fetch events" });
+    }
+  });
+
+  app.post("/api/events", async (req, res) => {
+    try {
+      const eventData = insertEventSchema.parse({
+        ...req.body,
+        start: new Date(req.body.start),
+        end: req.body.end ? new Date(req.body.end) : undefined,
+      });
+      const event = await storage.createEvent(eventData);
+      res.json(event);
+    } catch {
+      res.status(400).json({ error: "Invalid event" });
+    }
+  });
+
+  app.put("/api/events/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const eventData = insertEventSchema.parse({
+        ...req.body,
+        start: new Date(req.body.start),
+        end: req.body.end ? new Date(req.body.end) : undefined,
+      });
+      const updated = await storage.updateEvent(id, eventData);
+      res.json(updated);
+    } catch {
+      res.status(400).json({ error: "Invalid event" });
+    }
+  });
+
+  app.delete("/api/events/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteEvent(id);
+      res.json({ success: true });
+    } catch {
+      res.status(500).json({ error: "Failed to delete event" });
     }
   });
 

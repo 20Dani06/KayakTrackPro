@@ -11,6 +11,7 @@ export default function MobileNav() {
     { href: "/analytics", label: "Analytics", icon: BarChart3 },
     { href: "/fitness", label: "Fitness", icon: HeartPulse },
     { href: "/diary", label: "Diary", icon: NotebookText },
+    { href: "/calendar", label: "Calendar", icon: List },
     { href: "/profile", label: "Profile", icon: User },
   ];
 
