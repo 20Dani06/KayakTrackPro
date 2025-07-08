@@ -1,10 +1,12 @@
-import { sessions, userSettings, diaryEntries,
+import { sessions, userSettings, diaryEntries, events,
   type Session,
   type InsertSession,
   type UserSettings,
   type InsertUserSettings,
   type DiaryEntry,
   type InsertDiaryEntry,
+  type Event,
+  type InsertEvent,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
@@ -28,6 +30,12 @@ export interface IStorage {
   getDiaryEntries(): Promise<DiaryEntry[]>;
   updateDiaryEntry(id: number, entry: InsertDiaryEntry): Promise<DiaryEntry>;
   deleteDiaryEntry(id: number): Promise<void>;
+
+  // Event operations
+  createEvent(event: InsertEvent): Promise<Event>;
+  getEvents(): Promise<Event[]>;
+  updateEvent(id: number, event: InsertEvent): Promise<Event>;
+  deleteEvent(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -136,6 +144,28 @@ export class DatabaseStorage implements IStorage {
 
   async deleteDiaryEntry(id: number): Promise<void> {
     await db.delete(diaryEntries).where(eq(diaryEntries.id, id));
+  }
+
+  async createEvent(event: InsertEvent): Promise<Event> {
+    const [created] = await db.insert(events).values(event).returning();
+    return created;
+  }
+
+  async getEvents(): Promise<Event[]> {
+    return await db.select().from(events).orderBy(desc(events.start));
+  }
+
+  async updateEvent(id: number, event: InsertEvent): Promise<Event> {
+    const [updated] = await db
+      .update(events)
+      .set(event)
+      .where(eq(events.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteEvent(id: number): Promise<void> {
+    await db.delete(events).where(eq(events.id, id));
   }
 }
 

@@ -43,6 +43,16 @@ export const diaryEntries = pgTable("diary_entries", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const events = pgTable("events", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  start: timestamp("start").notNull(),
+  end: timestamp("end"),
+  raceNumber: text("race_number"),
+  eventNumber: text("event_number"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const insertSessionSchema = createInsertSchema(sessions).omit({
   id: true,
   createdAt: true,
@@ -57,9 +67,16 @@ export const insertDiaryEntrySchema = createInsertSchema(diaryEntries).omit({
   createdAt: true,
 });
 
+export const insertEventSchema = createInsertSchema(events).omit({
+  id: true,
+  createdAt: true,
+});
+
 export type Session = typeof sessions.$inferSelect;
 export type InsertSession = z.infer<typeof insertSessionSchema>;
 export type UserSettings = typeof userSettings.$inferSelect;
 export type InsertUserSettings = z.infer<typeof insertUserSettingsSchema>;
 export type DiaryEntry = typeof diaryEntries.$inferSelect;
 export type InsertDiaryEntry = z.infer<typeof insertDiaryEntrySchema>;
+export type Event = typeof events.$inferSelect;
+export type InsertEvent = z.infer<typeof insertEventSchema>;
