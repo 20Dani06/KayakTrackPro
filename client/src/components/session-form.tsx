@@ -350,7 +350,7 @@ export default function SessionForm() {
             <div className="flex space-x-4">
               <Button
                 type="submit"
-                className="flex-1 bg-ocean-blue hover:bg-deep-water"
+                className="flex-1 bg-white text-black hover:bg-gray-100"
                 disabled={createSessionMutation.isPending}
               >
                 {createSessionMutation.isPending ? "Saving..." : "Save Session"}
