@@ -27,20 +27,45 @@ export default function Logo({ className }: LogoProps) {
         y="50%"
         dominantBaseline="middle"
         textAnchor="middle"
-        fontFamily="'Montserrat Alternates', sans-serif"
-        fontWeight="200"
+        fontFamily="'Montserrat', 'Montserrat Alternates', sans-serif"
+        fontWeight="600"
 
         fontSize="56"
-        letterSpacing="4"
+        letterSpacing="2"
         fill="url(#kayaxGradient)"
         style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.2))" }}
       >
         <tspan
-          style={{ transform: "skewX(-10deg)", display: "inline-block" }}
+          style={{
+            transform: "skewX(-15deg) scaleX(0.75)",
+            display: "inline-block",
+          }}
         >
           K
         </tspan>
-        ΛYΛX
+        <tspan
+          style={{ transform: "scaleX(0.75)", display: "inline-block" }}
+        >
+          Λ
+        </tspan>
+        <tspan
+          style={{
+            transform: "skewX(-20deg) scaleX(0.6)",
+            display: "inline-block",
+          }}
+        >
+          Y
+        </tspan>
+        <tspan
+          style={{ transform: "scaleX(0.75)", display: "inline-block" }}
+        >
+          Λ
+        </tspan>
+        <tspan
+          style={{ transform: "scaleX(0.75)", display: "inline-block" }}
+        >
+          X
+        </tspan>
       </text>
     </svg>
   );
