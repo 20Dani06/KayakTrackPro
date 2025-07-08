@@ -3,13 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
 import { Link } from "wouter";
-import { format } from "date-fns";
+import { format, isToday } from "date-fns";
 import type { Session } from "@shared/schema";
 
 export default function TodaySessions() {
   const { data: sessions, isLoading } = useQuery<Session[]>({
     queryKey: ["/api/sessions"],
   });
+
 
   const today = new Date();
   const isSameDay = (date: Date) =>
