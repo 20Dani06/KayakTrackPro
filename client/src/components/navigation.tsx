@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Waves } from "lucide-react";
+import Logo from "./logo";
 
 export default function Navigation() {
   const [location] = useLocation();
@@ -14,9 +14,8 @@ export default function Navigation() {
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <Link href="/" className="flex items-center space-x-3">
-            <Waves className="text-ocean-blue text-2xl" />
-            <h1 className="text-xl font-bold text-gray-900">PaddleTracker</h1>
+          <Link href="/" className="flex items-center">
+            <Logo className="h-8 w-auto" />
           </Link>
           <nav className="hidden md:flex space-x-6">
             {navItems.map((item) => (
