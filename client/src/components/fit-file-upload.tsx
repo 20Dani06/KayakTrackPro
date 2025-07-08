@@ -38,10 +38,10 @@ export default function FitFileUpload() {
       return response.json();
     },
     onSuccess: (data) => {
-      toast({
-        title: "FIT File Uploaded Successfully!",
-        description: `Your Garmin session has been imported with ${data.distance}km distance and ${data.duration} minutes duration.`,
-      });
+        toast({
+          title: "FIT File Uploaded Successfully!",
+          description: `Your Garmin session has been imported with ${data.distance.toFixed(2)}km distance and ${data.duration} minutes duration.`,
+        });
       
       // Reset progress after a short delay
       setTimeout(() => setUploadProgress(0), 1000);
