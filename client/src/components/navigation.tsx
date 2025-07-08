@@ -8,6 +8,7 @@ export default function Navigation() {
     { href: "/", label: "Dashboard" },
     { href: "/sessions", label: "Sessions" },
     { href: "/analytics", label: "Analytics" },
+    { href: "/fitness", label: "Fitness Stats" },
   ];
 
   return (
