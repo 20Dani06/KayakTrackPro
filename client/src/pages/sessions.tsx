@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+
 import { Calendar, Clock, Heart, Zap, Power, BarChart3, Pencil, Trash2 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import SessionForm from "@/components/session-form";
@@ -35,6 +36,7 @@ export default function Sessions() {
           s.sessionType.toLowerCase().includes(search.toLowerCase())
         : true
     )
+
     .slice()
     .sort((a, b) =>
       sortDir === "asc"
@@ -149,6 +151,7 @@ export default function Sessions() {
             onChange={(e) => setSearch(e.target.value)}
             className="w-40"
           />
+
         </div>
         <div className="bg-gray-50 rounded-lg px-4 py-2 text-sm text-gray-600">
           {filteredSessions.length} sessions &bull; {summary.distance.toFixed(1)} km &bull; {summary.duration} min

@@ -29,15 +29,18 @@ export default function Logo({ className }: LogoProps) {
         textAnchor="middle"
         fontFamily="'Montserrat Alternates', sans-serif"
         fontWeight="200"
+
         fontSize="56"
         letterSpacing="4"
         fill="url(#kayaxGradient)"
         style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.2))" }}
       >
-        <tspan style={{ transform: "skewX(-10deg)", display: "inline-block" }}>
+        <tspan
+          style={{ transform: "skewX(-10deg)", display: "inline-block" }}
+        >
           K
         </tspan>
-        AYAX
+        ΛYΛX
       </text>
     </svg>
   );
