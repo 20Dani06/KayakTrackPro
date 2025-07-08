@@ -31,29 +31,45 @@ export default function Logo({ className }: LogoProps) {
         fontWeight="600"
 
         fontSize="56"
-        letterSpacing="8"
+        letterSpacing="2"
+
         fill="url(#kayaxGradient)"
         style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.2))" }}
       >
         <tspan
           style={{
+
             transform: "skewX(-15deg) scaleX(1.1)",
             display: "inline-block",
           }}
         >
           K
         </tspan>
-        <tspan>Λ</tspan>
+        <tspan
+          style={{ transform: "scaleX(0.75)", display: "inline-block" }}
+        >
+          Λ
+        </tspan>
         <tspan
           style={{
-            transform: "skewX(-20deg) scaleX(0.8)",
+            transform: "skewX(-20deg) scaleX(0.6)",
+
             display: "inline-block",
           }}
         >
           Y
         </tspan>
-        <tspan>Λ</tspan>
-        <tspan>X</tspan>
+        <tspan
+          style={{ transform: "scaleX(0.75)", display: "inline-block" }}
+        >
+          Λ
+        </tspan>
+        <tspan
+          style={{ transform: "scaleX(0.75)", display: "inline-block" }}
+        >
+          X
+        </tspan>
+
       </text>
     </svg>
   );
