@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import FitFileUpload from "@/components/fit-file-upload";
 import { Calendar } from "lucide-react";
-import { format } from "date-fns";
+import { Link } from "wouter";
+import { format, isToday } from "date-fns";
+
 import type { Session } from "@shared/schema";
 
 export default function TodaySessions() {
@@ -13,6 +15,7 @@ export default function TodaySessions() {
   const { data: sessions, isLoading } = useQuery<Session[]>({
     queryKey: ["/api/sessions"],
   });
+
 
   const today = new Date();
   const isSameDay = (date: Date) =>
