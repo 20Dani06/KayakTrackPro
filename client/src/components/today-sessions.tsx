@@ -11,8 +11,15 @@ export default function TodaySessions() {
     queryKey: ["/api/sessions"],
   });
 
+
+  const today = new Date();
+  const isSameDay = (date: Date) =>
+    date.getFullYear() === today.getFullYear() &&
+    date.getMonth() === today.getMonth() &&
+    date.getDate() === today.getDate();
+
   const todaysSessions = (sessions || []).filter((s) =>
-    isToday(new Date(s.date))
+    isSameDay(new Date(s.date))
   );
 
   if (isLoading) {
