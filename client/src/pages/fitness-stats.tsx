@@ -116,6 +116,7 @@ export default function FitnessStats() {
                       </motion.div>
                     </AnimatePresence>
                   </div>
+
                 </div>
               </div>
             )}
