@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Plus, BarChart3 } from "lucide-react";
 import { Link } from "wouter";
+import Logo from "@/components/logo";
 import PerformanceOverview from "@/components/performance-overview";
+import TodaySessions from "@/components/today-sessions";
 import SessionForm from "@/components/session-form";
 import FitFileUpload from "@/components/fit-file-upload";
 import RecentSessions from "@/components/recent-sessions";
@@ -13,6 +15,9 @@ import VO2Calculator from "@/components/vo2-calculator";
 export default function Dashboard() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="text-center mb-10">
+        <Logo className="mx-auto w-48" />
+      </div>
       {/* Quick Actions */}
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -30,6 +35,9 @@ export default function Dashboard() {
           </Button>
         </div>
       </div>
+
+      {/* Today's Session Reminder */}
+      <TodaySessions />
 
       {/* Performance Overview */}
       <PerformanceOverview />

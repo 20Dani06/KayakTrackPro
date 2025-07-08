@@ -11,7 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { insertSessionSchema, type InsertSession } from "@shared/schema";
+import { insertSessionSchema, type InsertSession, type Session } from "@shared/schema";
 import { Edit, Info } from "lucide-react";
 import { z } from "zod";
 
@@ -34,38 +34,56 @@ const formSchema = insertSessionSchema.omit({
 
 type FormData = z.infer<typeof formSchema>;
 
-export default function SessionForm() {
+interface SessionFormProps {
+  session?: Session;
+  onSuccess?: () => void;
+  onCancel?: () => void;
+}
+
+export default function SessionForm({ session, onSuccess, onCancel }: SessionFormProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      date: new Date(),
-      sessionType: "Training",
-      distance: 0,
-      duration: 0,
-      heartRate: null,
-      strokeRate: null,
-      power: null,
-      perceivedEffort: null,
-      notes: "",
-    },
+    defaultValues: session
+      ? {
+          ...session,
+          date: new Date(session.date),
+        }
+      : {
+          date: new Date(),
+          sessionType: "Training",
+          distance: 0,
+          duration: 0,
+          heartRate: null,
+          strokeRate: null,
+          power: null,
+          perceivedEffort: null,
+          notes: "",
+        },
   });
 
-  const createSessionMutation = useMutation({
+  const saveMutation = useMutation({
     mutationFn: async (data: FormData) => {
+      if (session) {
+        const response = await apiRequest("PUT", `/api/sessions/${session.id}`, data);
+        return response.json();
+      }
       const response = await apiRequest("POST", "/api/sessions", data);
       return response.json();
     },
     onSuccess: () => {
       toast({
-        title: "Session logged successfully!",
-        description: "Your training session has been saved.",
+        title: session ? "Session updated!" : "Session logged successfully!",
+        description: session
+          ? "Your session has been updated."
+          : "Your training session has been saved.",
       });
       form.reset();
       queryClient.invalidateQueries({ queryKey: ["/api/sessions"] });
       queryClient.invalidateQueries({ queryKey: ["/api/sessions/recent"] });
+      onSuccess?.();
     },
     onError: () => {
       toast({
@@ -77,7 +95,7 @@ export default function SessionForm() {
   });
 
   const onSubmit = (data: FormData) => {
-    createSessionMutation.mutate(data);
+    saveMutation.mutate(data);
   };
 
   return (
@@ -351,14 +369,17 @@ export default function SessionForm() {
               <Button
                 type="submit"
                 className="flex-1 bg-white text-black hover:bg-gray-100 border border-gray-300"
-                disabled={createSessionMutation.isPending}
+                disabled={saveMutation.isPending}
               >
-                {createSessionMutation.isPending ? "Saving..." : "Save Session"}
+                {saveMutation.isPending ? "Saving..." : session ? "Update Session" : "Save Session"}
               </Button>
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => form.reset()}
+                onClick={() => {
+                  form.reset();
+                  onCancel?.();
+                }}
               >
                 Cancel
               </Button>
