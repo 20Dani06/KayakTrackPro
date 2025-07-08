@@ -31,12 +31,15 @@ export default function Logo({ className }: LogoProps) {
         fontWeight="200"
 
         fontSize="56"
-        letterSpacing="4"
+        letterSpacing="8"
         fill="url(#kayaxGradient)"
         style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.2))" }}
       >
         <tspan
-          style={{ transform: "skewX(-10deg)", display: "inline-block" }}
+          style={{
+            transform: "skewX(-15deg) scaleX(1.1)",
+            display: "inline-block",
+          }}
         >
           K
         </tspan>
