@@ -27,8 +27,8 @@ export default function Logo({ className }: LogoProps) {
         y="50%"
         dominantBaseline="middle"
         textAnchor="middle"
-        fontFamily="'Montserrat Alternates', sans-serif"
-        fontWeight="200"
+        fontFamily="'Montserrat', 'Montserrat Alternates', sans-serif"
+        fontWeight="600"
 
         fontSize="56"
         letterSpacing="8"
@@ -43,7 +43,17 @@ export default function Logo({ className }: LogoProps) {
         >
           K
         </tspan>
-        ΛYΛX
+        <tspan>Λ</tspan>
+        <tspan
+          style={{
+            transform: "skewX(-20deg) scaleX(0.8)",
+            display: "inline-block",
+          }}
+        >
+          Y
+        </tspan>
+        <tspan>Λ</tspan>
+        <tspan>X</tspan>
       </text>
     </svg>
   );
