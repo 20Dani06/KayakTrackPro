@@ -55,7 +55,7 @@ export default function Sessions() {
           <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">No sessions logged yet</h3>
           <p className="text-gray-600 mb-4">Start tracking your kayaking sessions to see your progress</p>
-          <Button className="bg-ocean-blue hover:bg-deep-water">
+          <Button className="bg-white text-black hover:bg-gray-100 border border-gray-300">
             Log Your First Session
           </Button>
         </div>
@@ -157,7 +157,7 @@ export default function Sessions() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="text-ocean-blue border-ocean-blue hover:bg-water-light"
+                  className="text-black border-gray-300 bg-white hover:bg-gray-100"
                   onClick={() => setSelectedSession(session)}
                 >
                   <BarChart3 className="w-4 h-4 mr-2" />

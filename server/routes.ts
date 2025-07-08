@@ -163,6 +163,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const session = await storage.createSession(sessionData);
       res.json(session);
     } catch (error) {
+      console.error("Error in GET /api/sessions:", error);
       res.status(400).json({ error: "Invalid session data" });
     }
   });
@@ -172,6 +173,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sessions = await storage.getAllSessions();
       res.json(sessions);
     } catch (error) {
+      console.error("Error in GET /api/sessions/recent:", error);
       res.status(500).json({ error: "Failed to fetch sessions" });
     }
   });
@@ -182,6 +184,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sessions = await storage.getRecentSessions(limit);
       res.json(sessions);
     } catch (error) {
+
       res.status(500).json({ error: "Failed to fetch recent sessions" });
     }
   });
@@ -198,6 +201,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
       res.json(sessions);
     } catch (error) {
+      console.error("Error in GET /api/sessions/date-range:", error);
       res.status(500).json({ error: "Failed to fetch sessions by date range" });
     }
   });
