@@ -1,4 +1,11 @@
-import { sessions, userSettings, type Session, type InsertSession, type UserSettings, type InsertUserSettings } from "@shared/schema";
+import { sessions, userSettings, diaryEntries,
+  type Session,
+  type InsertSession,
+  type UserSettings,
+  type InsertUserSettings,
+  type DiaryEntry,
+  type InsertDiaryEntry,
+} from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
 
@@ -15,6 +22,12 @@ export interface IStorage {
   // User settings operations
   getUserSettings(): Promise<UserSettings | undefined>;
   updateUserSettings(settings: InsertUserSettings): Promise<UserSettings>;
+
+  // Diary operations
+  createDiaryEntry(entry: InsertDiaryEntry): Promise<DiaryEntry>;
+  getDiaryEntries(): Promise<DiaryEntry[]>;
+  updateDiaryEntry(id: number, entry: InsertDiaryEntry): Promise<DiaryEntry>;
+  deleteDiaryEntry(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -101,6 +114,28 @@ export class DatabaseStorage implements IStorage {
         .returning();
       return created;
     }
+  }
+
+  async createDiaryEntry(entry: InsertDiaryEntry): Promise<DiaryEntry> {
+    const [created] = await db.insert(diaryEntries).values(entry).returning();
+    return created;
+  }
+
+  async getDiaryEntries(): Promise<DiaryEntry[]> {
+    return await db.select().from(diaryEntries).orderBy(desc(diaryEntries.date));
+  }
+
+  async updateDiaryEntry(id: number, entry: InsertDiaryEntry): Promise<DiaryEntry> {
+    const [updated] = await db
+      .update(diaryEntries)
+      .set(entry)
+      .where(eq(diaryEntries.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteDiaryEntry(id: number): Promise<void> {
+    await db.delete(diaryEntries).where(eq(diaryEntries.id, id));
   }
 }
 

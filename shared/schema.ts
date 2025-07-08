@@ -36,6 +36,13 @@ export const userSettings = pgTable("user_settings", {
   vo2Max: real("vo2_max"), // ml/kg/min
 });
 
+export const diaryEntries = pgTable("diary_entries", {
+  id: serial("id").primaryKey(),
+  date: timestamp("date").notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const insertSessionSchema = createInsertSchema(sessions).omit({
   id: true,
   createdAt: true,
@@ -45,7 +52,14 @@ export const insertUserSettingsSchema = createInsertSchema(userSettings).omit({
   id: true,
 });
 
+export const insertDiaryEntrySchema = createInsertSchema(diaryEntries).omit({
+  id: true,
+  createdAt: true,
+});
+
 export type Session = typeof sessions.$inferSelect;
 export type InsertSession = z.infer<typeof insertSessionSchema>;
 export type UserSettings = typeof userSettings.$inferSelect;
 export type InsertUserSettings = z.infer<typeof insertUserSettingsSchema>;
+export type DiaryEntry = typeof diaryEntries.$inferSelect;
+export type InsertDiaryEntry = z.infer<typeof insertDiaryEntrySchema>;

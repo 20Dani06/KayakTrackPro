@@ -7,6 +7,7 @@ import Dashboard from "@/pages/dashboard";
 import Sessions from "@/pages/sessions";
 import Analytics from "@/pages/analytics";
 import FitnessStats from "@/pages/fitness-stats";
+import Diary from "@/pages/diary";
 import Login from "@/pages/login";
 import Navigation from "@/components/navigation";
 import MobileNav from "@/components/mobile-nav";
@@ -22,6 +23,7 @@ function Router() {
           <Route path="/sessions" component={Sessions} />
           <Route path="/analytics" component={Analytics} />
           <Route path="/fitness" component={FitnessStats} />
+          <Route path="/diary" component={Diary} />
           <Route path="/login" component={Login} />
           <Route component={NotFound} />
         </Switch>
