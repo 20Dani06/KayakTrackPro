@@ -134,3 +134,53 @@ export function calculateTrainingZoneDistribution(sessions: Session[]) {
     zone5: Math.round(zones.zone5),
   };
 }
+
+export function estimateEpoc(
+  power: number[],
+  hr: number[],
+  pVo2max: number,
+  hrRest: number,
+  hrMax: number,
+  options?: {
+    kDown?: number;
+    kUp?: number;
+    n?: number;
+    beta?: number;
+    I0?: number;
+    dt?: number;
+  }
+): { total: number; series: number[] } {
+  const {
+    kDown = 1,
+    kUp = 15,
+    n = 2,
+    beta = 0.05,
+    I0 = 0.4,
+    dt = 5 / 60,
+  } = options || {};
+
+  let E = 0;
+  const series: number[] = [];
+
+  const steps = Math.min(power.length, hr.length);
+  for (let i = 0; i < steps; i++) {
+    const p = power[i] ?? 0;
+    const h = hr[i] ?? hrRest;
+    const I_W = pVo2max ? p / pVo2max : 0;
+    const denom = hrMax - hrRest;
+    const I_HR = denom ? (h - hrRest) / denom : 0;
+    const I = Math.max(I_W, I_HR);
+
+    let dE: number;
+    if (I <= I0) {
+      dE = -kDown * E * dt;
+    } else {
+      dE = (kUp / (1 + beta * E)) * Math.pow(I - I0, n) * dt;
+    }
+
+    E = Math.max(0, E + dE);
+    series.push(E);
+  }
+
+  return { total: E, series };
+}
