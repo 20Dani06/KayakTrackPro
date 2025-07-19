@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp, Target, Award, Activity } from "lucide-react";
 import WeeklyDistanceChart from "@/components/weekly-distance-chart";
 import SpeedHeartRateChart from "@/components/speed-heart-rate-chart";
+import WeeklyEpocChart from "@/components/weekly-epoc-chart";
 import TrainingZones from "@/components/training-zones";
 import PerformanceInsights from "@/components/performance-insights";
 
@@ -70,6 +71,10 @@ export default function Analytics() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <WeeklyDistanceChart />
         <SpeedHeartRateChart />
+      </div>
+
+      <div className="mb-8">
+        <WeeklyEpocChart />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
