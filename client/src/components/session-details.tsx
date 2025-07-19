@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart3, MapPin, Activity, Zap, Heart, Power, X } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import type { Session } from "@shared/schema";
+import type { Session, UserSettings } from "@shared/schema";
+import { estimateEpoc } from "@/lib/kayak-calculations";
 
 interface SessionDetailsProps {
   session: Session;
@@ -47,6 +49,30 @@ export default function SessionDetails({ session, onClose }: SessionDetailsProps
   const heartRateData = getChartData('heartRate');
   const strokeRateData = getChartData('strokeRate');
   const powerData = getChartData('power');
+
+  const { data: settings } = useQuery<UserSettings | undefined>({
+    queryKey: ["/api/user-settings"],
+  });
+
+  const epocValue = useMemo(() => {
+    if (!settings || !session.powerData || !session.heartRateData) return null;
+    try {
+      const pArr: number[] = JSON.parse(session.powerData);
+      const hrArr: number[] = JSON.parse(session.heartRateData);
+      if (pArr.length === 0 || hrArr.length === 0) return null;
+      const pVo2max = Math.max(...pArr);
+      const result = estimateEpoc(
+        pArr,
+        hrArr,
+        pVo2max,
+        settings.restingHeartRate ?? 60,
+        settings.maxHeartRate ?? 190
+      );
+      return Number(result.total.toFixed(1));
+    } catch {
+      return null;
+    }
+  }, [settings, session.powerData, session.heartRateData]);
 
   const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
@@ -197,7 +223,7 @@ export default function SessionDetails({ session, onClose }: SessionDetailsProps
                   </Card>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <Card>
                     <CardContent className="p-4">
                       <div className="text-lg font-bold">{session.maxSpeed?.toFixed(1) || '--'} km/h</div>
@@ -216,6 +242,14 @@ export default function SessionDetails({ session, onClose }: SessionDetailsProps
                       <div className="text-sm text-gray-600">Elevation</div>
                     </CardContent>
                   </Card>
+                  {epocValue !== null && (
+                    <Card>
+                      <CardContent className="p-4">
+                        <div className="text-lg font-bold">{epocValue} ml/kg</div>
+                        <div className="text-sm text-gray-600">EPOC</div>
+                      </CardContent>
+                    </Card>
+                  )}
                 </div>
               </div>
             </TabsContent>
